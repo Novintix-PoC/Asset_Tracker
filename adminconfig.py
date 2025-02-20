@@ -1,4 +1,4 @@
-ADMIN_USERNAME = 'Admin'
+ADMIN_USERNAME = 'Salesadmin'
 ADMIN_PASSWORD = 'Admin@123'
 ADMIN_NAME = 'Admin'
 ADMIN_EMAIL = 'moniravi1234@gmail.com'
