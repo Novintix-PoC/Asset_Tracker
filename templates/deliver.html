@@ -1,0 +1,60 @@
+{% extends 'nav.html' %}
+
+
+
+{% block body %}
+
+    <div class="fb" style="margin:0% 20%">
+        <h2 style="text-align:center; margin-top:30px; color:darkslateblue">Details to update</h2>
+        <form class="mx-auto container" action="/deliveryupdate"  method="post" enctype="multipart/form-data" >
+
+
+            <div class="row  mx-auto" style="margin-top:40px;">
+                <div class="form-group col-md-12 ">
+                    <label for="text" class="col-form-label font-italic"><b>Available Products</b></label>
+                </div>
+                <div class="col" >
+                    <input type="text" class="form-control" name="availablecount" value="{{data}}" readonly>
+
+                </div>
+            </div>
+
+            <div class="row  mx-auto" style="margin-top:40px;">
+                <div class="form-group col-md-12 ">
+                    <label for="text" class="col-form-label font-italic"><b>Delivering Count</b></label>
+                </div>
+                <div class="col" >
+                    <input type="text" class="form-control" name="deliverycount" required>
+                </div>
+            </div>
+
+
+            <div class="row  mx-auto" style="margin-top:40px;">
+                <div class="form-group col-md-12 ">
+                    <label for="text" class="col-form-label font-italic"><b>Customer Name</b></label>
+                </div>
+                <div class="col" >
+                    <input type="text" class="form-control" name="customername" required>
+                </div>
+            </div>
+
+            
+
+            
+            
+
+
+            <div style="margin-top:40px; float:center; margin-left:40% ">
+
+                <button type="submit" class="btn btn-primary w-15" name="update" value="Submit form">Submit</button>
+                <!-- <input type="submit" id="form-submit" name="form-submit" value="Submit form"> -->
+            </div>
+            <br><br><br><br>
+        </form>
+        
+    </div>
+
+
+
+{% endblock %}
+

@@ -1,0 +1,31 @@
+{% extends 'nav.html' %}
+{% block body %}
+<div class="container">
+    <div class="row align-items-stretch">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4 h-100 mt-5">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title">In Transit Products</h5>
+                    <h2 class="fw-bold text-primary">{{ data[0] }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4 h-100 mt-5">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title">Delivered Products</h5>
+                    <h2 class="fw-bold text-primary">{{ data[1] }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    
+{% endblock %}
+
+
+

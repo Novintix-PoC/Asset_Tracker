@@ -1,0 +1,232 @@
+{% extends 'nav.html' %}
+{% block body %}
+<style>
+    .cardup {
+        height: 250px; /* Increase card height */
+    }
+    .sub-card-container {
+        height: 100%; /* Ensures sub-cards are in the center */
+        margin-top: -20px;
+    }
+    .sub-card {
+        height: 100px; /* Adjust height of inner small cards */
+        width: 50px;
+    }
+    .table-container {
+        max-height: 200px; /* Set max height for table container */
+        overflow-y: auto; /* Enable scroll */
+    }
+</style>
+<div class="container">
+    <div class="row g-4">
+        <!-- First Container: Combined Cards Inside One Card -->
+        <div class="col-md-6 cardup">
+            <div class="card shadow-lg rounded-4 h-100 d-flex flex-column justify-content-center">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Overview</h5>
+                    <div class="d-flex gap-3 justify-content-center align-items-center sub-card-container">
+                        <!-- First Small Card -->
+                        <div class="card shadow-sm flex-fill sub-card">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Products In Stock</h6>
+                                <h3 class="fw-bold text-primary">{{ stock_count }}</h3>
+                            </div>
+                        </div>
+                        <!-- Second Small Card -->
+                        <div class="card shadow-sm flex-fill sub-card">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">No of Sales Representatives</h6>
+                                <h3 class="fw-bold text-primary">{{ unique_mr_count }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Table Container -->
+        <div class="col-md-6 cardup">
+            <div class="card shadow-lg rounded-4 h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-center">Pending Requests</h5>
+                    
+                    {% if requestdata %}
+                    <div class="table-container">
+                        <table class="table table-bordered text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Request By</th>
+                                    <th>Count</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in range(0, requestdata|length) %}
+                                <tr>
+                                    <td>{{ requestdata[i][1] }}</td>
+                                    <td>{{ requestdata[i][2] }}</td>
+                                    <td>
+                                        <a href="{{ url_for('approval', rno=requestdata[i][0], dname=requestdata[i][1], countinc=requestdata[i][2]) }}" class="btn btn-success btn-sm">
+                                            Approve
+                                        </a>
+                                        
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-center text-muted fw-bold">No Pending Requests</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Bar Chart Container -->
+        <div class="col-md-12">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Delivery Status by Sales Representatives</h5>
+                    <div style="height: 300px; width: 100%;">
+                        <canvas id="mrBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+ 
+<script>
+      var ctx = document.getElementById('statusChart').getContext('2d');
+      var inTransit = {{ in_transit }};
+      var delivered = {{ delivered }};
+      var total = inTransit + delivered;
+    
+      var statusChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+              labels: ['In Transit', 'Delivered'],
+              datasets: [{
+                  data: [inTransit, delivered],
+                  backgroundColor: ['#17a2b8', '#28a745'],
+                  hoverOffset: 4
+              }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                      position: 'bottom'
+                  },
+                  datalabels: {
+                      color: '#fff',
+                      font: {
+                          weight: 'bold',
+                          size: 10
+                      },
+                  formatter: (value, ctx) => {
+                    let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    let percentage = ((value / sum) * 100).toFixed(1) + "%";
+                    return percentage; // Shows percentage
+                      }
+                  }
+              }
+          },
+          plugins: [ChartDataLabels]
+      });
+</script>
+
+<script>
+  // Fetch data from Flask Jinja2 variable
+  var uniqueMrList = {{ unique_mr_list | tojson }};
+
+  // Extract labels and data for bar chart
+  var names = uniqueMrList.map(item => item.Dealer_Name);
+  var inTransitData = uniqueMrList.map(item => item.Not_Sold);
+  var deliveredData = uniqueMrList.map(item => item.Sold);
+
+  // Ensure Chart.js and ChartDataLabels plugin are loaded
+Chart.register(ChartDataLabels);
+
+var ctx = document.getElementById('mrBarChart').getContext('2d');
+var mrBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: names,
+        datasets: [
+            {
+                label: 'In Transit',
+                data: inTransitData,
+                backgroundColor: '#17a2b8'
+            },
+            {
+                label: 'Delivered',
+                data: deliveredData,
+                backgroundColor: '#28a745'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    color: 'black' // Set x-axis text color to black
+                },
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 14
+                    }
+                }
+            },
+            tooltip: {
+                enabled: true
+            },
+            datalabels: {
+                anchor: 'center', // Position inside the bar
+                align: 'center', // Centered inside the bar
+                font: {
+                    size: 14,
+                    weight: 'bold'
+                },
+                color: 'white', // Text inside the bar (white)
+                formatter: function(value) {
+                    return value; // Display value inside the bar
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels] // Register the plugin for data labels
+});
+
+
+
+</script>
+
+    
+{% endblock %}
+
+
+
