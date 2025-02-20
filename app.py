@@ -322,7 +322,7 @@ def deliveryupdate():
 
 @app.route('/dashboardview')
 def dashboardview():
-    powerbi_url = "https://app.powerbi.com/groups/me/reports/e5ead2a6-8d6a-447e-9642-a713b3206519/eb97c4782ae7a57e7e8d?experience=power-bi"
+    powerbi_url = "https://app.powerbi.com/groups/me/reports/e5ead2a6-8d6a-447e-9642-a713b3206519/d3dab6794a43f94aedb4?experience=power-bi"
     return redirect(powerbi_url)
 
 
